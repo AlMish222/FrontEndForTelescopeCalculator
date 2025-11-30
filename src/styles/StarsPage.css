@@ -175,3 +175,51 @@ body {
     background: #28a745 !important;
     color: white !important;
 }
+
+@media (max-width: 575px) {
+    .image-container {
+        height: 160px;
+    }
+
+    .image-background {
+        width: 120px;
+        height: 120px;
+    }
+
+    .image {
+        width: 105px;
+        height: 105px;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 991px) {
+    .image-container {
+        height: 190px;
+    }
+
+    .image-background {
+        width: 145px;
+        height: 145px;
+    }
+
+    .image {
+        width: 125px;
+        height: 125px;
+    }
+}
+
+@media (min-width: 992px) {
+    .image-container {
+        height: 220px;
+    }
+
+    .image-background {
+        width: 165px;
+        height: 165px;
+    }
+
+    .image {
+        width: 145px;
+        height: 145px;
+    }
+}
