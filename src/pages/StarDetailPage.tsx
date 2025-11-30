@@ -57,7 +57,6 @@ export default function StarDetailPage() {
   return (
     <Container className="star-detail-page">
 
-      {/* Хлебные крошки */}
       <Breadcrumb className="my-4">
         <Breadcrumb.Item linkAs={Link} linkProps={{ to: "/" }}>
           Главная
@@ -114,14 +113,14 @@ export default function StarDetailPage() {
           {/* Кнопки */}
           <Row className="mt-4">
             <Col>
-              <Link to="/stars">
+              {/* <Link to="/stars">
                 <Button variant="outline-secondary" className="me-2">
                   Назад
                 </Button>
               </Link>
               <Button variant="success">
                 Добавить в корзину
-              </Button>
+              </Button> */}
             </Col>
           </Row>
 

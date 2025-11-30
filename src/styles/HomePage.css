@@ -20,3 +20,9 @@
     padding: 20px 30px;
     border-radius: 15px;
 }
+
+.home-page img {
+    height: 350px;
+    object-fit: cover;
+    border-radius: 15px;
+}

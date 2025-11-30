@@ -72,7 +72,7 @@ export default function StarsPage() {
                         <Button variant="primary">Подробнее</Button>
                     </Link>
 
-                  <Button variant="outline-success">Добавить</Button>
+                  {/* <Button variant="outline-success">Добавить</Button> */}
                 </div>
               </Card.Body>
 
