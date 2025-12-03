@@ -41,12 +41,18 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://192.168.1.51:9005',
+        // target: 'http://192.168.1.51:9005',
+        // changeOrigin: true,
+
+        target: 'http://172.20.10.2:9005',
         changeOrigin: true,
       },
       '/images': {
-        target: 'http://192.168.1.51:9000',
-        changeOrigin: true
+        // target: 'http://192.168.1.51:9000',
+        // changeOrigin: true
+
+        target: 'http://172.20.10.2:9000',
+        changeOrigin: true,
       }
     }
   }

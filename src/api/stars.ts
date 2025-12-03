@@ -33,7 +33,7 @@ const mockStars: Star[] = [
   },
 ];
 
-const BASE_URL = "http://192.168.1.51:9005/api/stars";
+const BASE_URL = "http://172.20.10.2:9005/api/stars";
 
 // GET /api/stars?star_name=xxx
 export async function getStars(starName?: string): Promise<Star[]> {

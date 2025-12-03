@@ -38,7 +38,6 @@ export default function App() {
         </Container>
       </Navbar>
 
-      {/* Основное содержимое */}
       <Container className="mt-5 pt-4">
         <Routes>
           <Route path="/" element={<HomePage />} />
