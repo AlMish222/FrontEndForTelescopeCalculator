@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button, Form, Breadcrumb } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { setFilter } from "../store/filterSlice";
 import { getStars } from "../api/stars";
 import type { Star } from "../types/star";
 import "../styles/StarsPage.css"
 
 export default function StarsPage() {
+  const dispatch = useDispatch();
+  const query = useSelector((state: any) => state.filter.query);
+
   const [stars, setStars] = useState<Star[]>([]);
-  const [query, setQuery] = useState("");
 
   async function loadStars() {
     try {
@@ -43,7 +47,7 @@ export default function StarsPage() {
           className="search-input"
           placeholder="Введите название звезды…"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => dispatch(setFilter(e.target.value))}
         />
       </Form>
 

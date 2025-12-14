@@ -5,7 +5,6 @@ import "../styles/HomePage.css"
 const HomePage: React.FC = () => {
   return (
     <>
-      {/* КАРУСЕЛЬ В САМОМ НАЧАЛЕ */}
       <Carousel className="home-carousel mb-4">
         <Carousel.Item>
           <img
@@ -43,7 +42,6 @@ const HomePage: React.FC = () => {
 
       </Carousel>
 
-      {/* КАРТОЧКА — ТВОЙ СУЩЕСТВУЮЩИЙ КОНТЕНТ */}
       <Card className="home-card shadow-sm">
         <Card.Body>
           <Card.Title className="home-title">
