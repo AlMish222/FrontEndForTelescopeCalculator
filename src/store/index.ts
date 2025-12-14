@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import filterReducer from "./filterSlice.ts";
+import starsReducer from "./starsSlice.ts";
 
 export const store = configureStore({
   reducer: {
-    filter: filterReducer,
+    stars: starsReducer,
   },
 });
 

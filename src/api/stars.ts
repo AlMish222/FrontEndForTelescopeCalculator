@@ -1,5 +1,6 @@
 import type { Star } from "../types/star";
 
+////
 const mockStars: Star[] = [
   {
     StarID: 1,
@@ -32,6 +33,7 @@ const mockStars: Star[] = [
     Dec: 0,
   },
 ];
+////
 
 const BASE_URL = "/api/stars";
 
