@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Calculation of the pointing angles of a stationary telescope",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.tauri.test.dev",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:3000",
@@ -13,8 +13,8 @@
     "windows": [
       {
         "title": "Calculator for telescope",
-        "width": 800,
-        "height": 600,
+        "width": 1000,
+        "height": 700,
         "resizable": true,
         "fullscreen": false
       }

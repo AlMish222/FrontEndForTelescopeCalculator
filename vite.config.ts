@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   base: "",
 
@@ -41,18 +40,18 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        // target: 'http://192.168.1.51:9005',
-        // changeOrigin: true,
-
-        target: 'http://172.20.10.2:9005',
+        target: 'http://192.168.1.51:9005',
         changeOrigin: true,
+
+        // target: 'http://172.20.10.2:9005',
+        // changeOrigin: true,
       },
       '/images': {
-        // target: 'http://192.168.1.51:9000',
-        // changeOrigin: true
+        target: 'http://192.168.1.51:9000',
+        changeOrigin: true
 
-        target: 'http://172.20.10.2:9000',
-        changeOrigin: true,
+        // target: 'http://172.20.10.2:9000',
+        // changeOrigin: true,
       }
     }
   }
