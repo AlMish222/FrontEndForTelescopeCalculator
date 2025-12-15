@@ -1,0 +1,342 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap');
+
+.telescope-observation-page {
+  min-height: 100vh;
+  padding: 20px;
+  padding-top: 120px;
+  padding-bottom: 140px;
+  background: url('http://127.0.0.1:9000/test/kosmo_background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  font-family: 'Noto Serif', serif;
+  position: relative;
+}
+
+/* Header (поверх основного Header компонента) */
+.observation-header {
+  position: fixed;
+  top: 90px; /* ниже основного Header */
+  left: 20px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px 15px;
+  border-radius: 10px;
+}
+
+.home-button-header {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #edffff;
+  border-radius: 20%;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+}
+
+.home-button-header:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+.home-button-header img {
+  width: 45px;
+  height: 45px;
+  cursor: pointer;
+}
+
+.page-title {
+  margin: 10px 0;
+  padding: 10px 15px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+  font-size: 36px;
+  font-weight: 600;
+  color: #edffff;
+  text-align: left;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Контейнер корзины */
+.cart-container {
+  max-width: calc(100% - 120px);
+  margin-left: 100px;
+  margin-right: 20px;
+  margin-top: 40px;
+}
+
+.cart-container h1 {
+  color: #edffff;
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+
+/* Стили для карточек заказов */
+.cart-items {
+  display: grid;
+  grid-auto-rows: auto;
+  gap: 15px;
+}
+
+.cart-item {
+  position: relative;
+  display: flex;
+  gap: 20px;
+  background: rgba(26, 64, 112, 0.95);
+  border-radius: 15px;
+  padding: 20px;
+  align-items: stretch;
+  backdrop-filter: blur(3px);
+}
+
+.item-image-container {
+  position: relative;
+  flex-shrink: 0;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-image-background {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  background: #edffff;
+  border-radius: 10px;
+  z-index: 1;
+}
+
+.item-image {
+  width: 115px;
+  height: 115px;
+  border-radius: 8px;
+  object-fit: cover;
+  z-index: 2;
+  position: relative;
+}
+
+/* Информация о товаре */
+.item-info {
+  flex-grow: 1;
+  color: #edffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+.item-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #edffff;
+}
+
+.item-description {
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: rgba(237, 255, 255, 0.9);
+  line-height: 1.4;
+}
+
+.item-count {
+  background: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 4px 6px;
+  line-height: 1;
+  text-align: center;
+  min-width: 25px;
+  z-index: 3;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Пустая корзина */
+.empty-cart {
+  text-align: center;
+  padding: 60px 20px;
+  background: #edffff;
+  border-radius: 15px;
+  backdrop-filter: blur(5px);
+}
+
+.empty-cart p {
+  font-size: 18px;
+  color: #1a4070;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #1a4070;
+  color: #edffff;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 500;
+  transition: background-color 0.3s;
+  border: none;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background-color: #15325a;
+  color: #edffff;
+}
+
+/* ФИКСИРОВАННАЯ ПАНЕЛЬ С КНОПКАМИ */
+.cart-footer-left {
+  height: 80px;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  gap: 10px;
+  background: rgba(26, 64, 112, 0.9);
+  backdrop-filter: blur(5px);
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.footer-button.delete-order {
+  background-color: #c0392b;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.footer-button.delete-order:hover {
+  background-color: #a93226;
+}
+
+.increase-button,
+.decrease-button {
+  padding: 6px 10px;
+  border-radius: 5px;
+  border: 1px solid #1a4070;
+  background-color: #edffff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  color: #1a4070;
+}
+
+.increase-button:hover,
+.decrease-button:hover {
+  background-color: #d4f5f5;
+}
+
+.observation-container {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.observation-container span {
+  background: rgba(0,0,0,0.6);
+  color: #edffff;
+  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  white-space: nowrap;
+}
+
+.observer-coord {
+  margin-right: 5px;
+  display: inline-block;
+}
+
+.star-coord-container {
+  display: flex;
+  gap: 8px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  flex-direction: row;
+
+}
+
+.star-coord-container span {
+  background: rgba(0,0,0,0.6);
+  color: #edffff;
+  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.star-coord {
+  display: inline-block;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .cart-container {
+    max-width: calc(100% - 40px);
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+  
+  .cart-item {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .item-image-container {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .item-image-background {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .item-image {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .star-coord-container {
+    position: static;
+    flex-direction: row;
+    justify-content: flex-start;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .observation-header {
+    top: 80px;
+  }
+}

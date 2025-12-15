@@ -8,10 +8,13 @@ interface UserState {
   error: string | null;
 }
 
+const savedToken = localStorage.getItem("authToken");
+const savedUsername = localStorage.getItem("username");
+
 const initialState: UserState = {
-  username: "",
-  token: null,
-  isAuthenticated: false,
+  username: savedUsername || "",
+  token: savedToken,
+  isAuthenticated: !!savedToken,
   error: null,
 };
 
@@ -28,7 +31,11 @@ export const loginUserAsync = createAsyncThunk(
         Password: credentials.password,
       });
 
-      // 👇 ВАЖНО: token из бека
+      if (res.data.token) {
+        localStorage.setItem("authToken", res.data.token);
+        localStorage.setItem("username", credentials.username);
+      }
+
       return {
         username: credentials.username,
         token: res.data.token,
@@ -45,8 +52,14 @@ export const logoutUserAsync = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       await api.users.logoutCreate();
+
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("username");
+
       return true;
     } catch {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("username");
       return rejectWithValue("Ошибка выхода");
     }
   }
@@ -55,7 +68,11 @@ export const logoutUserAsync = createAsyncThunk(
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    clearError(state) {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(loginUserAsync.fulfilled, (state, action) => {
@@ -68,13 +85,22 @@ const userSlice = createSlice({
         state.isAuthenticated = false;
         state.token = null;
         state.error = action.payload as string;
+
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("username");
       })
       .addCase(logoutUserAsync.fulfilled, (state) => {
         state.username = "";
         state.token = null;
         state.isAuthenticated = false;
         state.error = null;
-      });
+      })
+      .addCase(logoutUserAsync.rejected, (state) => {
+        state.username = "";
+        state.token = null;
+        state.isAuthenticated = false;
+        state.error = null;
+      })
   },
 });
 

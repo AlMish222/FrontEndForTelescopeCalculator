@@ -9,6 +9,7 @@ import HomePage from "./pages/HomePage";
 import StarsPage from "./pages/StarsPage";
 import StarDetailPage from "./pages/StarDetailPage";
 import LoginPage from "./pages/LoginPage";
+import TelescopeObservationPage from "./pages/TelescopeObservationPage";
 
 export default function App() {
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/stars" element={<StarsPage />} />
           <Route path="/stars/:id" element={<StarDetailPage />} />
+          <Route path="/observation/:observationId" element={<TelescopeObservationPage />} />
 
           <Route path="*" element={<h2>Страница не найдена</h2>} />
         </Routes>

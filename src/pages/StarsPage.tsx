@@ -1,23 +1,49 @@
-import { useEffect } from "react";
-import { Container, Row, Col, Card, Button, Form, Breadcrumb, Spinner } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Container, Row, Col, Card, Button, Form, Breadcrumb, Spinner, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import type { ModelsStar } from "../api/Api";
 import { getStarsList, setSearchValue } from "../store/starsSlice";
 import type { RootState, AppDispatch } from "../store";
+import { addStarToObservation, getCartInfo } from "../store/telescopeObservationDraftSlice";
 import "../styles/StarsPage.css";
 
 export default function StarsPage() {
   const dispatch = useDispatch<AppDispatch>();
+  const [addingStarId, setAddingStarId] = useState<number | null>(null);
 
   const { searchValue, stars, loading } = useSelector(
     (state: RootState) => state.stars
   );
 
+  const { isAuthenticated } = useSelector((state: RootState) => state.user);
+  const { loading: cartLoading } = useSelector(
+    (state: RootState) => state.telescopeObservationDraft
+  );
+  // const { app_id } = useSelector((state: RootState) => state.telescopeObservationDraft);
+
   // загрузка списка при монтировании и при изменении поиска
   useEffect(() => {
     dispatch(getStarsList());
-  }, [dispatch]);
+
+    if (isAuthenticated) {
+      dispatch(getCartInfo());
+    }
+  }, [dispatch, isAuthenticated]);
+
+  const handleAddToObservation = async (star: ModelsStar) => {
+    if (star.starID && isAuthenticated) {
+      setAddingStarId(star.starID);
+      try {
+        await dispatch(addStarToObservation(star.starID)).unwrap();
+        console.log(`Звезда ${star.starName} добавлена в наблюдение`);
+      } catch (error) {
+        console.error("Ошибка при добавлении звезды:", error);
+      } finally {
+        setAddingStarId(null);
+      }
+    }
+  };
 
   return (
     <Container className="stars-page">
@@ -70,7 +96,7 @@ export default function StarsPage() {
                     />
                   </div>
 
-                  <Card.Body>
+                  <Card.Body className="d-flex flex-column">
                     <Card.Title className="star-title">
                       {star.starName}
                     </Card.Title>
@@ -82,6 +108,37 @@ export default function StarsPage() {
                       <Link to={`/stars/${star.starID}`}>
                         <Button variant="primary">Подробнее</Button>
                       </Link>
+
+                      {isAuthenticated ? (
+                        <Button
+                          variant="outline-primary"
+                          className="flex-grow-1"
+                          onClick={() => handleAddToObservation(star)}
+                          disabled={cartLoading || addingStarId === star.starID}
+                        >
+                          {addingStarId === star.starID ? (
+                            <>
+                              <Spinner
+                                animation="border"
+                                size="sm"
+                                className="me-2"
+                              />
+                              Добавляется...
+                            </>
+                          ) : (
+                            "В корзину"
+                          )}
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outline-secondary"
+                          className="flex-grow-1"
+                          disabled
+                          title="Войдите для добавления"
+                        >
+                          В корзину
+                        </Button>
+                      )}
                     </div>
                   </Card.Body>
                 </Card>

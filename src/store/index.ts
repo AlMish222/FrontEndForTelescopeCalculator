@@ -11,5 +11,19 @@ export const store = configureStore({
   },
 });
 
+export const initializeAuth = () => {
+  const token = localStorage.getItem("authToken");
+  const username = localStorage.getItem("username");
+  
+  return {
+    user: {
+      username: username || "",
+      token: token,
+      isAuthenticated: !!token,
+      error: null,
+    }
+  };
+};
+
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
