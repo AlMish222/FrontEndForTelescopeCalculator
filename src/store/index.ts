@@ -1,9 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import starsReducer from "./starsSlice.ts";
+import userReducer from "./userSlice.ts";
+import telescopeObservationDraftReducer from "./telescopeObservationDraftSlice.ts"
 
 export const store = configureStore({
   reducer: {
     stars: starsReducer,
+    user: userReducer,
+    telescopeObservationDraft: telescopeObservationDraftReducer,
   },
 });
 

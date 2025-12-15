@@ -1,11 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "../api";
-import type { Star } from "../types/star";
-import { STARS_MOCK } from "../mock/starsMock";
+import type { ModelsStar } from "../api/Api";
 
 interface StarsState {
   searchValue: string;
-  stars: Star[];
+  stars: ModelsStar[];
   loading: boolean;
 }
 
@@ -15,18 +14,32 @@ const initialState: StarsState = {
   loading: false,
 };
 
+function mapStarFromApi(star: any): ModelsStar {
+  return {
+    starID: star.StarID,
+    starName: star.StarName,
+    shortDescription: star.ShortDescription,
+    description: star.Description,
+    imageURL: star.ImageURL,
+    isActive: star.IsActive,
+    ra: star.RA,
+    dec: star.Dec,
+    observations: star.Observations,
+  };
+}
+
 export const getStarsList = createAsyncThunk(
   "stars/getStarsList",
   async (_, { getState, rejectWithValue }) => {
     const { stars }: any = getState();
 
     try {
-      const response = await api.stars.starsList({
-        star_name: stars.searchValue,
-      });
+      const response = stars.searchValue
+        ? await api.stars.starsList({ star_name: stars.searchValue })
+        : await api.stars.starsList();
 
-      return response.data;
-    } catch (error) {
+      return response.data.map(mapStarFromApi);
+    } catch {
       return rejectWithValue("Ошибка при загрузке звёзд");
     }
   }
@@ -54,11 +67,6 @@ const starsSlice = createSlice({
       })
       .addCase(getStarsList.rejected, (state) => {
         state.loading = false;
-        state.stars = STARS_MOCK.filter((star) =>
-          star.StarName.toLowerCase().includes(
-            state.searchValue.toLowerCase()
-          )
-        );
       });
   },
 });

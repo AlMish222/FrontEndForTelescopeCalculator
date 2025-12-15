@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Container, Row, Col, Card, Button, Form, Breadcrumb, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import type { Star } from "../types/star";
+import type { ModelsStar } from "../api/Api";
 import { getStarsList, setSearchValue } from "../store/starsSlice";
 import type { RootState, AppDispatch } from "../store";
 import "../styles/StarsPage.css";
@@ -55,31 +55,31 @@ export default function StarsPage() {
       ) : (
         <Row>
           {stars.length ? (
-            stars.map((star: Star) => (
-              <Col key={star.StarID} sm={12} md={6} lg={3} className="mb-4">
+            stars.map((star: ModelsStar) => (
+              <Col key={star.starID} sm={12} md={6} lg={3} className="mb-4">
                 <Card className="h-100 shadow-sm star-card">
                   <div className="image-container">
                     <div className="image-background"></div>
                     <img
                       className="image"
                       src={
-                        star.ImageURL ||
+                        star.imageURL ||
                         "https://placehold.co/300x300?text=No+Image"
                       }
-                      alt={star.StarName}
+                      alt={star.starName}
                     />
                   </div>
 
                   <Card.Body>
                     <Card.Title className="star-title">
-                      {star.StarName}
+                      {star.starName}
                     </Card.Title>
                     <Card.Text className="star-text">
-                      {star.ShortDescription}
+                      {star.shortDescription}
                     </Card.Text>
 
                     <div className="card-buttons">
-                      <Link to={`/stars/${star.StarID}`}>
+                      <Link to={`/stars/${star.starID}`}>
                         <Button variant="primary">Подробнее</Button>
                       </Link>
                     </div>
@@ -90,7 +90,7 @@ export default function StarsPage() {
           ) : (
             <Col>
               <h4 className="text-center mt-5">
-                К сожалению, ничего не найдено 😞
+                К сожалению, ничего не найдено
               </h4>
             </Col>
           )}

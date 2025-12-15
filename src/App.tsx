@@ -1,47 +1,36 @@
-import { Routes, Route, Link } from "react-router-dom";
-import { Container, Navbar, Nav } from "react-bootstrap";
+import { Routes, Route } from "react-router-dom";
+import { Container } from "react-bootstrap";
+import { useEffect } from "react";
+import { invoke } from "@tauri-apps/api/core";
+
+import Header from "./components/Header";
 
 import HomePage from "./pages/HomePage";
-import StarsPage from "./pages/StarsPage.tsx";
+import StarsPage from "./pages/StarsPage";
 import StarDetailPage from "./pages/StarDetailPage";
-import { useEffect } from "react";
-import { invoke } from "@tauri-apps/api/core"
+import LoginPage from "./pages/LoginPage";
 
 export default function App() {
-  useEffect(() => { 
-    invoke('tauri', {cmd: 'create'})
+  useEffect(() => {
+    invoke("tauri", { cmd: "create" })
       .then((response: any) => console.log(response))
       .catch((error: any) => console.log(error));
-    
+
     return () => {
-      invoke('tauri', {cmd: 'close'})
-      .then((response: any) => console.log(response))
-      .catch((error: any) => console.log(error));
-    }
+      invoke("tauri", { cmd: "close" })
+        .then((response: any) => console.log(response))
+        .catch((error: any) => console.log(error));
+    };
   }, []);
 
   return (
     <>
-      <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
-        <Container>
-          <Navbar.Brand as={Link} to="/">
-            Расчёт углов наведения стационарного телескопа
-          </Navbar.Brand>
+      <Header />
 
-          <Navbar.Toggle />
-          <Navbar.Collapse>
-            <Nav className="me-auto">
-              <Nav.Link as={Link} to="/">Главная</Nav.Link>
-              <Nav.Link as={Link} to="/stars">Звёзды</Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-
-      {/* Основное содержимое */}
       <Container className="mt-5 pt-4">
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/stars" element={<StarsPage />} />
           <Route path="/stars/:id" element={<StarDetailPage />} />
 
