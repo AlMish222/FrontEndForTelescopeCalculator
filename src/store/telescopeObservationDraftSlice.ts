@@ -6,12 +6,26 @@ import  type {
   ModelsTelescopeObservationStar 
 } from "../api/Api"
 
+const OBSERVATION_STATUS = {
+  DRAFT: "черновик",
+  SUBMITTED: "сформирован", 
+  REJECTED: "отклонён",
+  COMPLETED: "завершён",
+  DELETED: "удалён",
+};
+
+interface ExtendedStar extends ModelsStar {
+  quantity?: number;
+  resultValue?: number;
+}
+
 interface TelescopeObservationDraftState {
   app_id: number | null;
   count: number;
   observation: ModelsTelescopeObservation | null;
   loading: boolean;
   error: string | null;
+  isDraft: boolean;
 }
 
 const initialState: TelescopeObservationDraftState = {
@@ -20,6 +34,7 @@ const initialState: TelescopeObservationDraftState = {
   observation: null,
   loading: false,
   error: null,
+  isDraft: false,
 };
 
 function mapStarFromApi(star: any, telescopeObservationStar?: any): ModelsStar & { quantity?: number; resultValue?: number }{
@@ -59,7 +74,7 @@ function mapObservationFromApi(data: any): ModelsTelescopeObservation {
   if (telescopeObservationStars.length > 0) {
     telescopeObservationStars.forEach((tos: any) => {
       if (tos.star) {
-        const existingStar = stars.find((s: any) => s.starID === tos.starID);
+        const existingStar = stars.find((s: ExtendedStar) => s.starID === tos.starID);
         if (existingStar) {
           existingStar.quantity = tos.quantity;
           existingStar.resultValue = tos.resultValue;
@@ -70,7 +85,7 @@ function mapObservationFromApi(data: any): ModelsTelescopeObservation {
 
   return {
     telescopeObservationID: data.telescopeObservationID || data.telescope_observation_id || data.id,
-    status: data.status || "draft",
+    status: data.status || OBSERVATION_STATUS.DRAFT,
     observationDate: data.observationDate,
     observerLatitude: data.observerLatitude,
     observerLongitude: data.observerLongitude,
@@ -79,7 +94,7 @@ function mapObservationFromApi(data: any): ModelsTelescopeObservation {
     formationDate: data.formationDate,
     creatorID: data.creatorID,
     moderatorID: data.moderatorID,
-    stars: stars,
+    stars: stars as ModelsStar[],
     telescopeObservationStars: telescopeObservationStars,
     creator: data.creator,
     moderator: data.moderator,
@@ -108,9 +123,7 @@ export const getObservationDraft = createAsyncThunk(
       const response = await api.telescopeObservations.telescopeObservationsDetail(
         observationId
       );
-
-      console.log("API Response for observation:", response.data);
-
+      
       const mappedData = mapObservationFromApi(response.data);
       return mappedData;
     } catch {
@@ -136,6 +149,123 @@ export const addStarToObservation = createAsyncThunk(
   }
 );
 
+//4. Удаление заявки
+export const deleteObservation = createAsyncThunk(
+  "telescopeObservationDraft/deleteObservation",
+  async (observationId: number, { rejectWithValue }) => {
+    try {
+      const response = await api.telescopeObservations.telescopeObservationsDelete(
+        observationId
+      );
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.status === 403) {
+        return rejectWithValue("Удаление доступно только модераторам");
+      }
+      return rejectWithValue("Ошибка при удалении заявки");
+    }
+  }
+);
+
+//5. Сохранение полей заявки
+export const updateObservation = createAsyncThunk(
+  "telescopeObservationDraft/updateObservation",
+  async ({ 
+    observationId, 
+    observationData 
+  }: { 
+    observationId: number; 
+    observationData: {
+      observationDate?: string;
+      observerLatitude?: number;
+      observerLongitude?: number;
+    } 
+  }, { rejectWithValue }) => {
+    try {
+      const response = await api.telescopeObservations.telescopeObservationsUpdate(
+        observationId,
+        observationData
+      );
+      return response.data;
+    } catch {
+      return rejectWithValue("Ошибка при обновлении данных заявки");
+    }
+  }
+);
+
+//6. Удаление звезды из заявки
+export const deleteStarFromObservation = createAsyncThunk(
+  "telescopeObservationDraft/deleteStarFromObservation",
+  async ({ 
+    observationId, 
+    starId 
+  }: { 
+    observationId: number; 
+    starId: number 
+  }, { rejectWithValue }) => {
+    try {
+      const response = await api.telescopeObservationStars.telescopeObservationStarsDelete({
+        telescope_observation_id: observationId,
+        star_id: starId
+      });
+      return { observationId, starId, data: response.data };
+    } catch (error: any) {
+      if (error.response?.status === 400) {
+        return rejectWithValue("Неверные параметры запроса");
+      }
+      return rejectWithValue("Ошибка при удалении звезды из заявки");
+    }
+  }
+);
+
+//7. Обновление количества звезды в заявке
+export const updateStarInObservation = createAsyncThunk(
+  "telescopeObservationDraft/updateStarInObservation",
+  async ({ 
+    observationId, 
+    starId,
+    updates
+  }: { 
+    observationId: number; 
+    starId: number;
+    updates: {
+      quantity?: number;
+      order_number?: number;
+      result_value?: number;
+    }
+  }, { rejectWithValue }) => {
+    try {
+      const response = await api.telescopeObservationStars.telescopeObservationStarsUpdate({
+        telescope_observation_id: observationId,
+        star_id: starId,
+        ...updates
+      });
+      return { observationId, starId, data: response.data, updates };
+    } catch (error: any) {
+      if (error.response?.status === 400) {
+        return rejectWithValue("Неверные параметры для обновления");
+      }
+      return rejectWithValue("Ошибка при обновлении звезды в заявке");
+    }
+  }
+);
+
+//8. Отправка заявки (формирование)
+export const submitObservation = createAsyncThunk(
+  "telescopeObservationDraft/submitObservation",
+  async (observationId: number, { rejectWithValue }) => {
+    try {
+      const response = await api.telescopeObservations.submitUpdate(observationId);
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.status === 400) {
+        const errorMsg = error.response.data?.error || "Нельзя сформировать эту заявку";
+        return rejectWithValue(errorMsg);
+      }
+      return rejectWithValue("Ошибка при отправке заявки");
+    }
+  }
+);
 
 const telescopeObservationDraftSlice = createSlice({
   name: "telescopeObservationDraft",
@@ -145,9 +275,28 @@ const telescopeObservationDraftSlice = createSlice({
       state.app_id = null;
       state.count = 0;
       state.observation = null;
+      state.isDraft = false;
     },
     clearError(state) {
       state.error = null;
+    },
+    // Редьюсер для сохранения полей заявки
+    setObservationData(state, action) {
+      if (state.observation) {
+        state.observation = {
+          ...state.observation,
+          ...action.payload,
+        };
+      }
+    },
+    // Редьюсер для удаления звезды из локального состояния
+    removeStarFromObservation(state, action) {
+      if (state.observation?.stars) {
+        state.observation.stars = state.observation.stars.filter(
+          (star) => star.starID !== action.payload
+        );
+        state.count = state.observation.stars.length;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -177,6 +326,7 @@ const telescopeObservationDraftSlice = createSlice({
         state.observation = action.payload;
         state.app_id = action.payload.telescopeObservationID || null;
         state.count = action.payload.stars?.length || 0;
+        state.isDraft = action.payload.status === OBSERVATION_STATUS.DRAFT;
       })
       .addCase(getObservationDraft.rejected, (state, action) => {
         state.loading = false;
@@ -193,9 +343,91 @@ const telescopeObservationDraftSlice = createSlice({
       .addCase(addStarToObservation.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+
+      // Удаление заявки
+      .addCase(deleteObservation.fulfilled, (state) => {
+        state.app_id = null;
+        state.count = 0;
+        state.observation = null;
+        state.isDraft = false;
+        state.loading = false;
+      })
+      .addCase(deleteObservation.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+      // Обновление заявки
+      .addCase(updateObservation.fulfilled, (state, action) => {
+        state.loading = false;
+        if (state.observation) {
+          state.observation = {
+            ...state.observation,
+            ...action.payload,
+          };
+        }
+      })
+      .addCase(updateObservation.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+      // Удаление звезды из заявки
+      .addCase(deleteStarFromObservation.fulfilled, (state, action) => {
+        state.loading = false;
+        // Удаляем звезду из локального состояния
+        if (state.observation?.stars) {
+          state.observation.stars = state.observation.stars.filter(
+            (star) => star.starID !== action.payload.starId
+          );
+          state.count = state.observation.stars.length;
+        }
+      })
+      .addCase(deleteStarFromObservation.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      
+      // submitObservation (отправка заявки)
+      .addCase(submitObservation.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(submitObservation.fulfilled, (state) => {
+        state.loading = false;
+        state.isDraft = false; // После отправки уже не черновик
+        if (state.observation) {
+          state.observation.status = OBSERVATION_STATUS.SUBMITTED; // "сформирован"
+        }
+      })
+      .addCase(submitObservation.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      
+      // updateStarInObservation (обновление количества)
+      .addCase(updateStarInObservation.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateStarInObservation.fulfilled, (state, action) => {
+        state.loading = false;
+        // Обновляем количество в локальном состоянии
+        if (state.observation?.stars) {
+          const starIndex = state.observation.stars.findIndex(
+            star => star.starID === action.payload.starId
+          );
+          if (starIndex !== -1 && action.payload.updates.quantity !== undefined) {
+            const star = state.observation.stars[starIndex] as ExtendedStar;
+            star.quantity = action.payload.updates.quantity;
+          }
+        }
+      })
+      .addCase(updateStarInObservation.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
 
-export const { resetDraft, clearError } = telescopeObservationDraftSlice.actions;
+export const { resetDraft, clearError, setObservationData, removeStarFromObservation } = telescopeObservationDraftSlice.actions;
 export default telescopeObservationDraftSlice.reducer;

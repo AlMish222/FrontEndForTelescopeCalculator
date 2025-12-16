@@ -33,15 +33,8 @@ export default function Header() {
           dispatch(getCartInfo());
           setRetryCount(prev => prev + 1);
         }
-      }, 500);
+      }, 1500);
       
-      // // 3. Если через 1500ms всё ещё нет данных, ещё одна попытка
-      // const timer2 = setTimeout(() => {
-      //   if (isAuthenticated && !app_id && retryCount < 3) {
-      //     console.log("Повторная попытка загрузки корзины (таймаут 2)...");
-      //     dispatch(getCartInfo());
-      //   }
-      // }, 1500);
       
       // 3. Слушаем события visibilitychange (возврат на вкладку)
       const handleVisibilityChange = () => {

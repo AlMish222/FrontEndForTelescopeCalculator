@@ -300,6 +300,114 @@
   display: inline-block;
 }
 
+.observation-info-card {
+  background: rgba(26, 64, 112, 0.95);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  color: #edffff;
+}
+
+.observation-info-card h3 {
+  margin-bottom: 15px;
+  color: #edffff;
+}
+
+.observation-info-view p {
+  margin-bottom: 8px;
+}
+
+.observation-info-edit .form-group {
+  margin-bottom: 15px;
+}
+
+.observation-info-edit label {
+  display: block;
+  margin-bottom: 5px;
+  color: #edffff;
+}
+
+.observation-info-edit .form-control {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #1a4070;
+  background: rgba(237, 255, 255, 0.1);
+  color: #edffff;
+}
+
+.observation-info-edit .form-control:focus {
+  outline: none;
+  border-color: #4d9fff;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.save-btn, .cancel-btn, .edit-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.save-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.save-btn:hover {
+  background-color: #218838;
+}
+
+.cancel-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background-color: #5a6268;
+}
+
+.edit-btn {
+  background-color: transparent;
+  color: #4d9fff;
+  border: 1px solid #4d9fff;
+  margin-top: 10px;
+}
+
+.edit-btn:hover {
+  background-color: rgba(77, 159, 255, 0.1);
+}
+
+/* Кнопка удаления звезды */
+.delete-star-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #c0392b;
+  color: white;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.delete-star-btn:hover {
+  background-color: #a93226;
+}
+
 /* Адаптивность */
 @media (max-width: 768px) {
   .cart-container {
@@ -338,5 +446,17 @@
   
   .observation-header {
     top: 80px;
+  }
+
+  .edit-buttons {
+    flex-direction: column;
+  }
+  
+  .delete-star-btn {
+    top: 5px;
+    left: 5px;
+    width: 25px;
+    height: 25px;
+    font-size: 16px;
   }
 }
