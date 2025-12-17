@@ -71,8 +71,6 @@ export default function StarsPage() {
                     <Link to={`/stars/${star.StarID}`}>
                         <Button variant="primary">Подробнее</Button>
                     </Link>
-
-                  {/* <Button variant="outline-success">Добавить</Button> */}
                 </div>
               </Card.Body>
 
