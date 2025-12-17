@@ -199,70 +199,6 @@ body {
     font-size: 1.1rem !important;
 }
 
-/* Адаптивность для мобильных устройств */
-@media (max-width: 768px) {
-    .star-detail-page {
-        padding: 15px 10px;
-    }
-    
-    .star-detail-page .bg-dark .card-title {
-        font-size: 1.5rem !important;
-    }
-    
-    .detail-card .card-body {
-        padding: 1.5rem !important;
-    }
-    
-    .star-name-title {
-        font-size: 1.5rem !important;
-        text-align: center !important;
-    }
-    
-    /* Уменьшаем фото на мобильных */
-    .detail-star-image {
-        width: 280px !important;
-        height: 280px !important;
-        margin: 0 auto !important;
-    }
-    
-    .description-title {
-        font-size: 1.3rem !important;
-        text-align: center !important;
-    }
-    
-    .description-text {
-        font-size: 1rem !important;
-        text-align: justify !important;
-    }
-    
-    .detail-card .btn {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-    
-    .detail-card .btn-outline-secondary {
-        margin-right: 0 !important;
-    }
-}
-
-/* Адаптивность для планшетов */
-@media (max-width: 992px) {
-    .detail-card .card-body {
-        padding: 2rem !important;
-    }
-    
-    .star-name-title {
-        text-align: center !important;
-        margin-top: 1rem !important;
-    }
-    
-    /* На планшетах тоже уменьшаем фото */
-    .detail-star-image {
-        width: 300px !important;
-        height: 300px !important;
-    }
-}
-
 /* Анимации */
 .detail-card {
     animation: fadeInUp 0.6s ease-out;
@@ -288,4 +224,127 @@ body {
 .detail-card .bg-light:hover {
     transform: translateY(-2px);
     transition: transform 0.3s ease;
+}
+
+@media (max-width: 575px) {
+
+    /* Блок с картинкой и названием — вертикально */
+    .star-detail-page .row.align-items-start {
+        flex-direction: column-reverse !important;
+        text-align: center !important;
+    }
+
+    /* Картинка меньше */
+    .detail-star-image {
+        width: 200px !important;
+        height: 200px !important;
+        margin-bottom: 20px !important;
+    }
+
+    /* Заголовки */
+    .star-name-title {
+        font-size: 1.3rem !important;
+        text-align: center !important;
+    }
+
+    .star-detail-page h1 {
+        font-size: 1.5rem !important;
+        text-align: center !important;
+    }
+
+    .description-title {
+        font-size: 1.2rem !important;
+        text-align: center !important;
+    }
+
+    /* Текст описания */
+    .description-text {
+        font-size: 0.95rem !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Карточка — меньше отступы */
+    .detail-card .card-body {
+        padding: 1.5rem !important;
+    }
+
+    /* Кнопки идут столбиком */
+    .detail-card .row.mt-4 .col {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .detail-card .btn {
+        width: 100% !important;
+    }
+
+    /* Хлебные крошки */
+    .star-detail-page .breadcrumb {
+        padding: 10px 14px !important;
+        font-size: 0.9rem !important;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 991px) {
+
+    /* Центрируем крупные заголовки */
+    .star-name-title,
+    .description-title {
+        text-align: center !important;
+    }
+
+    .star-detail-page h1 {
+        text-align: center !important;
+        font-size: 1.8rem !important;
+    }
+
+    /* Картинка немного меньше */
+    .detail-star-image {
+        width: 260px !important;
+        height: 260px !important;
+        margin-bottom: 20px !important;
+    }
+
+    /* Строка с картинкой и названием */
+    .star-detail-page .row.align-items-start {
+        flex-direction: column-reverse !important;
+        text-align: center !important;
+    }
+
+    /* Описание немного компактнее */
+    .description-text {
+        font-size: 1rem !important;
+        line-height: 1.6 !important;
+    }
+
+    /* Уменьшенные отступы карточки */
+    .detail-card .card-body {
+        padding: 2rem !important;
+    }
+
+    /* Кнопки центрируем, но оставляем в строке */
+    .detail-card .row.mt-4 .col {
+        justify-content: center !important;
+        gap: 20px !important;
+    }
+}
+
+@media (min-width: 992px) {
+
+    /* Центрирование заголовков */
+    .star-name-title,
+    .description-title {
+        text-align: center !important;
+    }
+
+    /* Уменьшаем отступы карточки */
+    .detail-card .card-body {
+        padding: 2rem !important;
+    }
+
+    /* Чуть уменьшаем картинку */
+    .detail-star-image {
+        width: 280px !important;
+        height: 280px !important;
+    }
 }

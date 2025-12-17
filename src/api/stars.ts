@@ -1,5 +1,6 @@
 import type { Star } from "../types/star";
 
+////
 const mockStars: Star[] = [
   {
     StarID: 1,
@@ -32,6 +33,7 @@ const mockStars: Star[] = [
     Dec: 0,
   },
 ];
+////
 
 const BASE_URL = "/api/stars";
 
@@ -66,7 +68,7 @@ export async function getStarById(id: number): Promise<Star> {
   } catch (e) {
     console.warn("Бэкенд недоступен, использую mock getStarById", e);
 
-    const found = mockStars.find((s) => s.StarID === id);
+    // const found = mockStars.find((s) => s.StarID === id);
 
     return {
       StarID: id,

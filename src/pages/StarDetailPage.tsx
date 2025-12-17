@@ -1,15 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { 
-  Container, 
-  Button, 
-  Breadcrumb, 
-  Spinner, 
-  Card, 
-  Row, 
-  Col,
-  Image 
-} from "react-bootstrap";
+import { Container, Button, Breadcrumb, Spinner, Card, Row, Col,Image } from "react-bootstrap";
 import { getStarById } from "../api/stars";
 import type { Star } from "../types/star";
 import "../styles/StarDetailPage.css";
@@ -82,12 +73,13 @@ export default function StarDetailPage() {
           
           {/* Название и изображение в одной строке */}
           <Row className="align-items-start mb-4">
-            <Col md={8}>
+            <Col xs={12} md={8} className="order-2 order-md-1 mt-3 mt-md-0">
               <Card.Title as="h2" className="star-name-title">
                 Название: {star.StarName}
               </Card.Title>
             </Col>
-            <Col md={4} className="text-center">
+
+            <Col xs={12} md={4} className="text-center order-1 order-md-2">
               <Image
                 src={star.ImageURL || "https://placehold.co/400x400?text=No+Image"}
                 alt={star.StarName}
@@ -109,20 +101,6 @@ export default function StarDetailPage() {
               </Card.Text>
             </Card.Body>
           </Card>
-
-          {/* Кнопки */}
-          <Row className="mt-4">
-            <Col>
-              {/* <Link to="/stars">
-                <Button variant="outline-secondary" className="me-2">
-                  Назад
-                </Button>
-              </Link>
-              <Button variant="success">
-                Добавить в корзину
-              </Button> */}
-            </Col>
-          </Row>
 
         </Card.Body>
       </Card>
