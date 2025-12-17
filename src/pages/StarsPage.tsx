@@ -20,8 +20,7 @@ export default function StarsPage() {
   const { loading: cartLoading } = useSelector(
     (state: RootState) => state.telescopeObservationDraft
   );
-  // const { app_id } = useSelector((state: RootState) => state.telescopeObservationDraft);
-
+  
   // загрузка списка при монтировании и при изменении поиска
   useEffect(() => {
     dispatch(getStarsList());

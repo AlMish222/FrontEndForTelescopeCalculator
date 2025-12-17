@@ -3,6 +3,7 @@ import type { ChangeEvent, FormEvent } from "react";
 import { Form, Button, Alert, Container } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { fetchUserDataAsync } from "../store/userSlice";
 
 import type { AppDispatch, RootState } from "../store";
 import { loginUserAsync } from "../store/userSlice";
@@ -39,46 +40,64 @@ export default function LoginPage() {
     // ЗАГРУЖАЕМ КОРЗИНУ ПОСЛЕ УСПЕШНОГО ЛОГИНА
     if (loginUserAsync.fulfilled.match(result)) {
       api.setSecurityData(result.payload.token);
+
+      await dispatch(fetchUserDataAsync());
+
       dispatch(getCartInfo());
       navigate("/");
     }
   }
 
   return (
-    <Container style={{ maxWidth: "400px", marginTop: "150px" }}>
-      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
+    <Container className="mt-5" style={{ maxWidth: "400px" }}>
+      <h2 className="text-white text-center mb-4">
         Рады снова Вас видеть!
       </h2>
 
-      {error && <Alert variant="danger">{error}</Alert>}
+      {error && (
+        <Alert variant="danger" className="mb-3">
+          {error}
+        </Alert>
+      )}
 
-      <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="username" className="mb-3">
-          <Form.Label>Имя пользователя</Form.Label>
-          <Form.Control
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            placeholder="Введите имя пользователя"
-          />
-        </Form.Group>
+      <div className="bg-dark p-4 rounded border">
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <Form.Label className="text-light">Имя пользователя</Form.Label>
+            <Form.Control
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Введите имя пользователя"
+              className="bg-secondary text-white border-dark"
+              required
+            />
+          </Form.Group>
 
-        <Form.Group controlId="password" className="mb-4">
-          <Form.Label>Пароль</Form.Label>
-          <Form.Control
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Введите пароль"
-          />
-        </Form.Group>
+          <Form.Group className="mb-4">
+            <Form.Label className="text-light">Пароль</Form.Label>
+            <Form.Control
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Введите пароль"
+              className="bg-secondary text-white border-dark"
+              required
+            />
+          </Form.Group>
 
-        <Button type="submit" variant="primary" style={{ width: "100%" }}>
-          Войти
-        </Button>
-      </Form>
+          <Button 
+            type="submit" 
+            variant="primary" 
+            className="w-100"
+            disabled={!formData.username || !formData.password}
+          >
+            Войти
+          </Button>
+        </Form>
+      </div>
     </Container>
   );
 }

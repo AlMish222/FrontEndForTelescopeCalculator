@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import starsReducer from "./starsSlice.ts";
 import userReducer from "./userSlice.ts";
 import telescopeObservationDraftReducer from "./telescopeObservationDraftSlice.ts"
+import observationsReducer from "./observationsSlice.ts";
 
 export const store = configureStore({
   reducer: {
     stars: starsReducer,
     user: userReducer,
     telescopeObservationDraft: telescopeObservationDraftReducer,
+    observations: observationsReducer,
   },
 });
 

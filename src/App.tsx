@@ -2,6 +2,10 @@ import { Routes, Route } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { useDispatch } from "react-redux";
+import { checkAuthAsync } from "./store/userSlice";
+import { api } from "./api";
+import type { AppDispatch } from "./store";
 
 import Header from "./components/Header";
 
@@ -10,19 +14,33 @@ import StarsPage from "./pages/StarsPage";
 import StarDetailPage from "./pages/StarDetailPage";
 import LoginPage from "./pages/LoginPage";
 import TelescopeObservationPage from "./pages/TelescopeObservationPage";
+import MyObservationsPage from "./pages/MyObservationsPage";
+import ProfilePage from "./pages/ProfilePage";
 
 export default function App() {
+  const dispatch = useDispatch<AppDispatch>();
+  
   useEffect(() => {
     invoke("tauri", { cmd: "create" })
       .then((response: any) => console.log(response))
       .catch((error: any) => console.log(error));
+
+    // Восстанавливаем авторизацию при загрузке
+    const token = localStorage.getItem("authToken");
+    if (token && typeof api.setSecurityData === 'function') {
+      // 1. Сначала устанавливаем токен в API клиент
+      api.setSecurityData(token);
+      
+      // 2. Потом проверяем авторизацию
+      dispatch(checkAuthAsync());
+    }
 
     return () => {
       invoke("tauri", { cmd: "close" })
         .then((response: any) => console.log(response))
         .catch((error: any) => console.log(error));
     };
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
@@ -35,6 +53,8 @@ export default function App() {
           <Route path="/stars" element={<StarsPage />} />
           <Route path="/stars/:id" element={<StarDetailPage />} />
           <Route path="/observation/:observationId" element={<TelescopeObservationPage />} />
+          <Route path="/my-observations" element={<MyObservationsPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
 
           <Route path="*" element={<h2>Страница не найдена</h2>} />
         </Routes>

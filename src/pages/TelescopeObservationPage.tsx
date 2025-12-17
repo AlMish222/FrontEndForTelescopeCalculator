@@ -13,7 +13,6 @@ import {
  } from "../store/telescopeObservationDraftSlice";
 import type { AppDispatch, RootState } from "../store";
 import "../styles/TelescopeObservationPage.css";
-import { Link } from "react-router-dom";
 import { Spinner, Alert } from "react-bootstrap";
 
 export default function TelescopeObservationPage() {

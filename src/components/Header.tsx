@@ -81,6 +81,8 @@ export default function Header() {
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/">Главная</Nav.Link>
             <Nav.Link as={Link} to="/stars">Звёзды</Nav.Link>
+            <Nav.Link as={Link} to="/my-observations">Мои заявки</Nav.Link>
+            <Nav.Link as={Link} to="/profile">Личный кабинет</Nav.Link>
           </Nav>
 
           <Nav className="ms-auto align-items-center gap-3">
