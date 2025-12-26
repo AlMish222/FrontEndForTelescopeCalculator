@@ -4,8 +4,22 @@ import { Container, Navbar, Nav } from "react-bootstrap";
 import HomePage from "./pages/HomePage";
 import StarsPage from "./pages/StarsPage.tsx";
 import StarDetailPage from "./pages/StarDetailPage";
+import { useEffect } from "react";
+import { invoke } from "@tauri-apps/api/core"
 
 export default function App() {
+  useEffect(() => { 
+    invoke('tauri', {cmd: 'create'})
+      .then((response: any) => console.log(response))
+      .catch((error: any) => console.log(error));
+    
+    return () => {
+      invoke('tauri', {cmd: 'close'})
+      .then((response: any) => console.log(response))
+      .catch((error: any) => console.log(error));
+    }
+  }, []);
+
   return (
     <>
       <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
@@ -24,7 +38,6 @@ export default function App() {
         </Container>
       </Navbar>
 
-      {/* Основное содержимое */}
       <Container className="mt-5 pt-4">
         <Routes>
           <Route path="/" element={<HomePage />} />

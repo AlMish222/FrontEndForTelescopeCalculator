@@ -33,7 +33,7 @@ const mockStars: Star[] = [
   },
 ];
 
-const BASE_URL = "/api/stars";
+const BASE_URL = "http://192.168.1.51:9005/api/stars";
 
 // GET /api/stars?star_name=xxx
 export async function getStars(starName?: string): Promise<Star[]> {
@@ -66,7 +66,7 @@ export async function getStarById(id: number): Promise<Star> {
   } catch (e) {
     console.warn("Бэкенд недоступен, использую mock getStarById", e);
 
-    const found = mockStars.find((s) => s.StarID === id);
+    // const found = mockStars.find((s) => s.StarID === id);
 
     return {
       StarID: id,
