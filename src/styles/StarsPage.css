@@ -176,6 +176,30 @@ body {
     color: white !important;
 }
 
+.btn-custom-search {
+  height: 38px !important;
+  padding: 0 25px !important;
+  line-height: 38px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 25px !important;
+  background-color: #edffff !important;
+  border: 1px solid #1a4070 !important;
+  color: #1a4070 !important;
+  font-weight: 500 !important;
+  margin-top: 20px;
+}
+
+.btn-custom-search:hover {
+  background-color: #1a4070 !important;
+  color: #edffff !important;
+}
+
+.btn-custom-search:disabled {
+  opacity: 0.65;
+}
+
 @media (max-width: 575px) {
     .image-container {
         height: 160px;

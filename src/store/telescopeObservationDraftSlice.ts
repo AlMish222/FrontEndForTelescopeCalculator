@@ -5,6 +5,9 @@ import  type {
   ModelsTelescopeObservation, 
   ModelsTelescopeObservationStar 
 } from "../api/Api"
+import type { RootState } from "../store";
+
+const LOCAL_STORAGE_KEY = 'telescope_cart';
 
 const OBSERVATION_STATUS = {
   DRAFT: "черновик",
@@ -28,6 +31,22 @@ interface TelescopeObservationDraftState {
   isDraft: boolean;
 }
 
+const loadFromLocalStorage = (): Partial<TelescopeObservationDraftState> => {
+  try {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        app_id: parsed.app_id || null,
+        count: parsed.count || 0,
+      };
+    }
+  } catch (e) {
+    console.error('Ошибка загрузки корзины из localStorage:', e);
+  }
+  return {};
+};
+
 const initialState: TelescopeObservationDraftState = {
   app_id: null,
   count: 0,
@@ -35,6 +54,7 @@ const initialState: TelescopeObservationDraftState = {
   loading: false,
   error: null,
   isDraft: false,
+  ...loadFromLocalStorage(),
 };
 
 function mapStarFromApi(star: any, telescopeObservationStar?: any): ModelsStar & { quantity?: number; resultValue?: number }{
@@ -101,6 +121,17 @@ function mapObservationFromApi(data: any): ModelsTelescopeObservation {
   };
 }
 
+const saveToLocalStorage = (state: TelescopeObservationDraftState) => {
+  try {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
+      app_id: state.app_id,
+      count: state.count,
+    }));
+  } catch (e) {
+    console.error('Ошибка сохранения корзины в localStorage:', e);
+  }
+};
+
 // 1. Получение информации о корзине
 export const getCartInfo = createAsyncThunk(
   "telescopeObservationDraft/getCartInfo",
@@ -135,12 +166,21 @@ export const getObservationDraft = createAsyncThunk(
 // 3. Добавление звезды в черновик
 export const addStarToObservation = createAsyncThunk(
   "telescopeObservationDraft/addStarToObservation",
-  async (starId: number, { rejectWithValue, dispatch }) => {
+  async (starId: number, { rejectWithValue, dispatch, getState }) => {
     try {
       const response = await api.stars.postStars(starId);
       
-      // После успешного добавления обновляем информацию о корзине
-      dispatch(getCartInfo());
+      // После успешного добавления, обновляем информацию о корзине
+      const state = getState() as RootState;
+      const app_id = state.telescopeObservationDraft.app_id;
+
+      if (app_id) {
+        // Загружаем обновлённую заявку с сервера
+        await dispatch(getObservationDraft(app_id));
+      } else {
+        // Или обновляем корзину
+        await dispatch(getCartInfo());
+      }
       
       return response.data;
     } catch {
@@ -267,6 +307,8 @@ export const submitObservation = createAsyncThunk(
   }
 );
 
+
+
 const telescopeObservationDraftSlice = createSlice({
   name: "telescopeObservationDraft",
   initialState,
@@ -276,6 +318,7 @@ const telescopeObservationDraftSlice = createSlice({
       state.count = 0;
       state.observation = null;
       state.isDraft = false;
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
     },
     clearError(state) {
       state.error = null;
@@ -309,7 +352,16 @@ const telescopeObservationDraftSlice = createSlice({
       .addCase(getCartInfo.fulfilled, (state, action) => {
         state.loading = false;
         state.app_id = action.payload.telescope_observation_id || null;
-        state.count = action.payload.count || 0;
+
+        if (action.payload.stars && Array.isArray(action.payload.stars)) {
+          state.count = action.payload.stars.reduce(
+            (total: number, star: any) => total + (star.quantity || 1), 
+            0
+          );
+        } else {
+          state.count = 0;
+        }
+        saveToLocalStorage(state);
       })
       .addCase(getCartInfo.rejected, (state, action) => {
         state.loading = false;
@@ -321,12 +373,26 @@ const telescopeObservationDraftSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
+
       .addCase(getObservationDraft.fulfilled, (state, action) => {
         state.loading = false;
         state.observation = action.payload;
         state.app_id = action.payload.telescopeObservationID || null;
-        state.count = action.payload.stars?.length || 0;
+
+        if (action.payload.stars && Array.isArray(action.payload.stars)) {
+          state.count = action.payload.stars.reduce(
+            (total: number, star: any) => {
+              const quantity = star.quantity || 1;
+              return total + quantity;
+            }, 
+            0
+          );
+        } else {
+          state.count = 0;
+        }
+        
         state.isDraft = action.payload.status === OBSERVATION_STATUS.DRAFT;
+        saveToLocalStorage(state);
       })
       .addCase(getObservationDraft.rejected, (state, action) => {
         state.loading = false;
@@ -337,9 +403,21 @@ const telescopeObservationDraftSlice = createSlice({
       .addCase(addStarToObservation.pending, (state) => {
         state.loading = true;
       })
-      .addCase(addStarToObservation.fulfilled, (state) => {
+
+      .addCase(addStarToObservation.fulfilled, (state, action) => {
         state.loading = false;
+
+        if (action.payload?.total_quantity !== undefined) {
+          state.count = Number(action.payload.total_quantity);
+        } else if (action.payload?.count !== undefined) {
+          state.count = Number(action.payload.count);
+        } else {
+          state.count += 1;
+        }
+        
+        saveToLocalStorage(state);
       })
+
       .addCase(addStarToObservation.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
@@ -376,12 +454,18 @@ const telescopeObservationDraftSlice = createSlice({
       // Удаление звезды из заявки
       .addCase(deleteStarFromObservation.fulfilled, (state, action) => {
         state.loading = false;
-        // Удаляем звезду из локального состояния
+
         if (state.observation?.stars) {
           state.observation.stars = state.observation.stars.filter(
             (star) => star.starID !== action.payload.starId
           );
-          state.count = state.observation.stars.length;
+          state.count = state.observation.stars.reduce(
+            (total: number, star: any) => {
+              const quantity = star.quantity || 1;
+              return total + quantity;
+            }, 
+            0
+          );
         }
       })
       .addCase(deleteStarFromObservation.rejected, (state, action) => {
@@ -389,15 +473,15 @@ const telescopeObservationDraftSlice = createSlice({
         state.error = action.payload as string;
       })
       
-      // submitObservation (отправка заявки)
+      // submitObservation
       .addCase(submitObservation.pending, (state) => {
         state.loading = true;
       })
       .addCase(submitObservation.fulfilled, (state) => {
         state.loading = false;
-        state.isDraft = false; // После отправки уже не черновик
+        state.isDraft = false;
         if (state.observation) {
-          state.observation.status = OBSERVATION_STATUS.SUBMITTED; // "сформирован"
+          state.observation.status = OBSERVATION_STATUS.SUBMITTED;
         }
       })
       .addCase(submitObservation.rejected, (state, action) => {
@@ -405,20 +489,27 @@ const telescopeObservationDraftSlice = createSlice({
         state.error = action.payload as string;
       })
       
-      // updateStarInObservation (обновление количества)
+      // updateStarInObservation
       .addCase(updateStarInObservation.pending, (state) => {
         state.loading = true;
       })
+
       .addCase(updateStarInObservation.fulfilled, (state, action) => {
         state.loading = false;
-        // Обновляем количество в локальном состоянии
+
         if (state.observation?.stars) {
           const starIndex = state.observation.stars.findIndex(
             star => star.starID === action.payload.starId
           );
+          
           if (starIndex !== -1 && action.payload.updates.quantity !== undefined) {
             const star = state.observation.stars[starIndex] as ExtendedStar;
             star.quantity = action.payload.updates.quantity;
+            
+            state.count = state.observation.stars.reduce(
+              (total: number, star: any) => total + (star.quantity || 1), 
+              0
+            );
           }
         }
       })

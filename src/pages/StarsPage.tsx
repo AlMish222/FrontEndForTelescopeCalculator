@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Button, Form, Breadcrumb, Spinner } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Container, Row, Col, Card, Button, Form, Breadcrumb, Spinner, Badge, InputGroup } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import type { ModelsStar } from "../api/Api";
 import { getStarsList, setSearchValue } from "../store/starsSlice";
@@ -10,6 +10,7 @@ import "../styles/StarsPage.css";
 
 export default function StarsPage() {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const [addingStarId, setAddingStarId] = useState<number | null>(null);
 
   const { searchValue, stars, loading } = useSelector(
@@ -17,7 +18,7 @@ export default function StarsPage() {
   );
 
   const { isAuthenticated } = useSelector((state: RootState) => state.user);
-  const { loading: cartLoading } = useSelector(
+  const { count, app_id, observation, loading: cartLoading } = useSelector(
     (state: RootState) => state.telescopeObservationDraft
   );
   
@@ -35,6 +36,7 @@ export default function StarsPage() {
       setAddingStarId(star.starID);
       try {
         await dispatch(addStarToObservation(star.starID)).unwrap();
+        
         console.log(`Звезда ${star.starName} добавлена в наблюдение`);
       } catch (error) {
         console.error("Ошибка при добавлении звезды:", error);
@@ -44,8 +46,56 @@ export default function StarsPage() {
     }
   };
 
+  const calculateTotalStars = () => {
+    if (observation?.stars) {
+      return observation.stars.reduce(
+        (total: number, star: any) => total + (star.quantity || 1),
+        0
+      );
+    }
+    return count || 0;
+  };
+
+  const totalStarsCount = calculateTotalStars();
+
+  const handleCartClick = () => {
+    if (app_id != null) {
+      navigate(`/observation/${app_id}`);
+    }
+  };
+
   return (
     <Container className="stars-page">
+      {isAuthenticated && (
+        <div className="cart-indicator mb-4">
+          <Button 
+            variant="outline-primary"
+            onClick={handleCartClick}
+            className="cart-button"
+            disabled={!app_id || cartLoading}
+            style={{
+              padding: "10px 20px",
+              fontWeight: 500,
+              display: "flex",
+              alignItems: "center",
+              gap: "8px"
+            }}
+          >
+            <img
+              src="http://127.0.0.1:9000/test/basket.png"
+              alt="cart"
+              style={{ width: "20px", height: "20px" }}
+            />
+            Корзина наблюдений
+            {totalStarsCount > 0 && (
+              <Badge bg="danger" className="ms-2">
+                {totalStarsCount}
+              </Badge>
+            )}
+          </Button>
+        </div>
+      )}
+
       <div className="breadcrumbs-fixed">
         <Breadcrumb>
           <Breadcrumb.Item linkAs={Link} linkProps={{ to: "/" }}>
@@ -56,6 +106,30 @@ export default function StarsPage() {
       </div>
 
       <Form className="mb-3" onSubmit={(e) => e.preventDefault()}>
+        <InputGroup style={{ gap: "10px"}}>
+          <Form.Control
+            type="text"
+            className="search-input"
+            placeholder="Введите название звезды…"
+            value={searchValue}
+            onChange={(e) => dispatch(setSearchValue(e.target.value))}
+            style={{
+              flex: 1,
+              height: "38px"
+            }}
+          />
+          <Button
+            className="btn-custom-search"
+            type="button"
+            disabled={loading}
+            onClick={() => dispatch(getStarsList())}
+          >
+            {loading ? "Поиск..." : "Найти"}
+          </Button>
+        </InputGroup>
+      </Form>
+
+      {/* <Form className="mb-3" onSubmit={(e) => e.preventDefault()}>
         <Form.Control
           type="text"
           className="search-input"
@@ -71,7 +145,7 @@ export default function StarsPage() {
         >
           Найти
         </Button>
-      </Form>
+      </Form> */}
 
       {loading ? (
         <div className="d-flex justify-content-center mt-5">

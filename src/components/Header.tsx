@@ -1,4 +1,4 @@
-import { Container, Navbar, Nav, Button, Badge } from "react-bootstrap";
+import { Container, Navbar, Nav, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -15,7 +15,7 @@ export default function Header() {
     (state: RootState) => state.user
   );
 
-  const { app_id, observation, count } = useSelector(
+  const { app_id, observation } = useSelector(
     (state: RootState) => state.telescopeObservationDraft
   );
 
@@ -59,16 +59,6 @@ export default function Header() {
     navigate("/");
   }
 
-  const displayCount = observation?.stars?.reduce((sum: number, star: any) => {
-    return sum + (star.quantity || 1);
-  }, 0) || count || 0;
-
-  function handleCartClick() {
-    if (app_id != null) {
-      navigate(`/observation/${app_id}`);
-    }
-  }
-
   return (
     <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
       <Container>
@@ -90,40 +80,6 @@ export default function Header() {
               <span style={{ color: "white" }}>
                 {username}
               </span>
-            )}
-
-            {(isAuthenticated && (app_id != null || observation)) && (
-              <Button 
-                variant="outline-light" 
-                onClick={handleCartClick} 
-                style={{ cursor: "pointer", position: "relative", padding: "8px 12px", opacity: app_id ? 1 : 0.7}}
-                disabled={!app_id}
-                title={app_id ? "Перейти в корзину" : "Корзина загружается..."}
-              >
-                <img
-                  src="http://127.0.0.1:9000/test/basket.png"
-                  alt="cart"
-                  style={{ width: "20px", height: "20px" }}
-                />
-                {displayCount > 0 && (
-                  <Badge 
-                    bg="danger" 
-                    style={{ 
-                      position: "absolute",
-                      top: "-8px",
-                      right: "-8px",
-                      fontSize: "0.7rem",
-                      minWidth: "20px",
-                      height: "20px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center"
-                    }}
-                  >
-                    {displayCount}
-                  </Badge>
-                )}
-              </Button>
             )}
 
             {!isAuthenticated && (

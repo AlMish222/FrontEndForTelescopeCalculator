@@ -19,7 +19,7 @@ export default function MyObservationsPage() {
     (state: RootState) => state.observations
   );
   
-  // Данные пользователя - используем только is_moderator
+  // Данные пользователя
   const { user_id, is_moderator, isAuthenticated } = useSelector(
     (state: RootState) => state.user
   );
@@ -53,7 +53,7 @@ export default function MyObservationsPage() {
   
   // Состояние для short polling - заменили NodeJS.Timeout на number
   const [pollingInterval, setPollingInterval] = useState<number | null>(null);
-  const [autoRefresh, setAutoRefresh] = useState(false);
+  const [autoRefresh] = useState(false);
   
   // Модальное окно для подтверждения действия
   const [showModal, setShowModal] = useState(false);
@@ -286,7 +286,7 @@ const getTotalStars = (obs: any): number =>
               <Col md={3}>
                 <Form.Group>
                   <Form.Label style={{ color: "#adb5bd", fontSize: "0.9em" }}>
-                    Дата от
+                    Дата сформирования от
                   </Form.Label>
                   <Form.Control
                     type="date"
@@ -300,7 +300,7 @@ const getTotalStars = (obs: any): number =>
               <Col md={3}>
                 <Form.Group>
                   <Form.Label style={{ color: "#adb5bd", fontSize: "0.9em" }}>
-                    Дата до
+                    Дата сформирования до
                   </Form.Label>
                   <Form.Control
                     type="date"
@@ -364,14 +364,6 @@ const getTotalStars = (obs: any): number =>
                     Сбросить
                   </Button>
                   
-                  {/* Переключатель auto-refresh */}
-                  <Button
-                    variant={autoRefresh ? "success" : "outline-success"}
-                    onClick={() => setAutoRefresh(!autoRefresh)}
-                    title="Автообновление каждые 5 секунд"
-                  >
-                    {autoRefresh ? " Автообновление ВКЛ" : " Автообновление ВЫКЛ"}
-                  </Button>
                 </ButtonGroup>
               </Col>
             </Row>
